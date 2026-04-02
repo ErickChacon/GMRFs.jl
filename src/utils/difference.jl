@@ -9,7 +9,18 @@ respect to the `n` elements. Supported domain types include `CartesianGrid` or
 `SimpleGraph`, with an option for CartesianGrid to treat the grid as circular (`circular =
 true`), allowing neighbors to wrap around the grid's edges like a toroidal topology.
 """
-function difference(g::CartesianGrid{1}; order = 1, circular = false)
+function difference(g::CartesianGrid; order = 1, circular = false)
+    Dim = paramdim(g)
+    if Dim == 1
+        return difference1(g; order = order, circular = circular)
+    elseif Dim == 2
+        return difference2(g; order = order, circular = circular)
+    else
+        throw(ErrorException("not implemented for Dim > 2"))
+    end
+end
+
+function difference1(g::CartesianGrid; order = 1, circular = false)
     n = nelements(g)
 
     if order == 1 && !circular
@@ -33,7 +44,7 @@ function difference(g::CartesianGrid{1}; order = 1, circular = false)
     throw(ErrorException("not implemented"))
 end
 
-function difference(g::CartesianGrid{2}; order = 1, circular = false)
+function difference2(g::CartesianGrid; order = 1, circular = false)
     n1, n2 = size(g)
     n = nelements(g)
 

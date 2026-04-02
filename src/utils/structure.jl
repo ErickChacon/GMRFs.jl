@@ -43,9 +43,22 @@ need for a full structure matrix computation, and instead focusing on the base o
 circulant matrix. Optional parameters `δ` and `order` are supported, offering the same
 interpretation as in the `structure` matrix.
 """
-function structure_base(g::CartesianGrid{1}; δ = 0, order = 1)
+function structure_base(g::CartesianGrid; δ = 0, order = 1)
+    Dim = paramdim(g)
+
+    if Dim == 1
+        return structure_base1(g; δ = δ, order = order)
+    elseif Dim == 2
+        return structure_base2(g; δ = δ, order = order)
+    else
+        throw(ErrorException("not implemented for Dim > 2"))
+    end
+end
+
+function structure_base1(g::CartesianGrid; δ = 0, order = 1)
+    n = nelements(g)
     if order == 1
-        base = sparsevec([1, 2, length(g)], [2.0, -1, -1])
+        base = sparsevec([1, 2, n], [2.0, -1, -1])
     elseif order > 1
         w = centered([-1, 2, -1])
         base = imfilter(structure_base(g, order = order - 1), w, "circular")
@@ -54,7 +67,7 @@ function structure_base(g::CartesianGrid{1}; δ = 0, order = 1)
     base
 end
 
-function structure_base(g::CartesianGrid{2}; δ = 0, order = 1)
+function structure_base2(g::CartesianGrid; δ = 0, order = 1)
     if order == 1
         (n1, n2) = size(g)
         base = sparse([1, 1, 2, 1, n2], [1, 2, 1, n1, 1], [4.0, -1, -1, -1, -1])

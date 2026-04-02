@@ -9,7 +9,8 @@ otherwise, it is false. Supported domain types include `CartesianGrid`, `Geometr
 `SimpleGraph`, with an option for CartesianGrid to treat the grid as circular (`circular =
 true`), allowing neighbors to wrap around the grid's edges like a toroidal topology.
 """
-function adjacency(d::CartesianGrid{Dim}; circular::Bool = false) where {Dim}
+function adjacency(d::CartesianGrid; circular::Bool = false)
+    Dim = paramdim(d)
     if Dim == 1
         adjacency1(d; order = 1, circular = circular)
     elseif Dim == 2
@@ -19,7 +20,7 @@ function adjacency(d::CartesianGrid{Dim}; circular::Bool = false) where {Dim}
     end
 end
 
-function adjacency1(d::CartesianGrid{1}; order::Int = 1, circular::Bool = false)
+function adjacency1(d::CartesianGrid; order::Int = 1, circular::Bool = false)
     n = nelements(d)
 
     # neighbors to the right (→)
@@ -36,7 +37,7 @@ function adjacency1(d::CartesianGrid{1}; order::Int = 1, circular::Bool = false)
     A .| A'
 end
 
-function adjacency2(d::CartesianGrid{2}; order::Int = 1, circular::Bool = false)
+function adjacency2(d::CartesianGrid; order::Int = 1, circular::Bool = false)
     n1, n2 = size(d)
     n = nelements(d)
 
